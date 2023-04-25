@@ -2,15 +2,13 @@ from fastapi import FastAPI
 from app.nbp import get_response, get_difference, get_rates_min_max, get_rates_average
 
 app = FastAPI(
-    title='Backend oriented task',
-    docs_url='/'
+    title='Backend oriented task'
 )
 
 rates_url = 'https://api.nbp.pl/api/exchangerates/rates'
 
 
 def min_max_average(rates):
-    print(rates)
     min_value = rates[0]
     max_value = min_value
 

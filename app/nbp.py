@@ -17,23 +17,18 @@ def get_response(url):
 
 
 def get_rates_average(response):
-    print(response)
     result = response[0].get('mid')
-    print(result)
     return result
 
 
 def get_rates_min_max(response):
-    print(response)
     result = []
     for item in response:
         result.append(item.get('mid'))
-    print(result)
     return result
 
 
 def get_difference(response):
-    print(response)
     result = []
     for item in response:
         bid = item.get('bid')
@@ -43,5 +38,4 @@ def get_difference(response):
             result.append(temp)
         else:
             result.append(-temp)
-    print(result)
     return result
