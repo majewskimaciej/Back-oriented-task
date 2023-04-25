@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-import nbp
+from app.nbp import get_response, get_difference, get_rates_min_max, get_rates_average
 
 app = FastAPI(
     title='Backend oriented task',
@@ -9,35 +9,41 @@ app = FastAPI(
 rates_url = 'https://api.nbp.pl/api/exchangerates/rates'
 
 
+def min_max_average(rates):
+    print(rates)
+    min_value = rates[0]
+    max_value = min_value
+
+    for rate in rates:
+        if rate < min_value:
+            min_value = rate
+        if rate > max_value:
+            max_value = rate
+
+    return {'min': min_value, 'max': max_value}
+
+
 @app.get('/average/{code}/{date}')
-async def average(code: str, date: str):
-    response = nbp.get_response(rates_url + f'/a/{code}/{date}/')
-    rate = nbp.get_rates_average(response)
+async def get_average(code: str, date: str):
+    response = get_response(rates_url + f'/a/{code}/{date}/')
+    rate = get_rates_average(response)
 
     return {'average': rate}
 
 
 @app.get('/minmax/{code}/{n}')
-async def min_max_average(code: str, n: int):
-    response = nbp.get_response(rates_url + f'/a/{code}/last/{n}/')
-    rates = nbp.get_rates_min_max(response)
-    min_value = rates[0].get('mid')
-    max_value = min_value
+async def get_min_max_average(code: str, n: int):  # check naming convention for api calls
+    response = get_response(rates_url + f'/a/{code}/last/{n}/')
+    rates = get_rates_min_max(response)
+    result = min_max_average(rates)
 
-    for rate in rates:
-        if rate.get('mid') < min_value:
-            min_value = rate.get('mid')
-        if rate.get('mid') > max_value:
-            max_value = rate.get('mid')
-
-    print(min_value)
-    return {'min': min_value, 'max': max_value}
+    return result
 
 
 @app.get('/difference/{code}/{n}')
-async def major_difference(code: str, n: int):
-    response = nbp.get_response(rates_url + f'/c/{code}/last/{n}/')
-    difference = nbp.get_difference(response)
+async def get_major_difference(code: str, n: int):
+    response = get_response(rates_url + f'/c/{code}/last/{n}/')
+    difference = get_difference(response)
     result = max(difference)
 
     return {'major': round(result, 4)}

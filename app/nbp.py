@@ -13,29 +13,29 @@ def get_response(url):
     except requests.exceptions.RequestException as e:
         raise HTTPException(status_code=400, detail=e.response.text)
 
-    return result
+    return result.json().get('rates')
 
 
 def get_rates_average(response):
-    rate = response.json().get('rates')
-    result = rate[0].get('mid')
+    print(response)
+    result = response[0].get('mid')
     print(result)
     return result
 
 
 def get_rates_min_max(response):
-    rates = response.json().get('rates')
+    print(response)
     result = []
-    for item in rates:
-        result.append(item)
+    for item in response:
+        result.append(item.get('mid'))
     print(result)
     return result
 
 
 def get_difference(response):
-    rates = response.json().get('rates')
+    print(response)
     result = []
-    for item in rates:
+    for item in response:
         bid = item.get('bid')
         ask = item.get('ask')
         temp = bid - ask
